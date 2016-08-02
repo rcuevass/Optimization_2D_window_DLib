@@ -53,8 +53,8 @@ typedef matrix<double,0,1> column_vector;
 // Class for functions
 functions getFunct;
 
-double xCoord = double(30);
-double yCoord = double(30);
+double xCoord = double(10);
+double yCoord = double(10);
 double r = double(15);
 double mu = 0.5;
 
@@ -92,9 +92,6 @@ double rosen (const column_vector& m)
 		const double r = m(2);
 		const double mu = m(3);
 
-		
-    // compute Rosenbrock's function and return the result
-    //return 100.0*pow(y - x*x,2) + pow(1 - x,2);
 
 		return -1.0*getFunct.ObjFunction4D(x,y,r,mu);
 
@@ -126,10 +123,6 @@ const column_vector rosen_derivative (const column_vector& m)
 		res(2) = -1.0*gradVal[2];
 		res(3) = -1.0*gradVal[3];
 
-
-    // now compute the gradient vector
-    //res(0) = -400*x*(y-x*x) - 2*(1-x); // derivative of rosen() with respect to x
-    //res(1) = 200*(y-x*x);              // derivative of rosen() with respect to y
     
 		return res;
 }
@@ -269,6 +262,22 @@ public:
 int main()
 {
 	
+
+	//char test_Alg = 'all';
+  // options for algorithm
+	// test_Alg = 'all' -- run all algorithms ---> DEFAULT
+	//					= 'bfgs' -- bfgs with analytical gradient
+	//					= 'bfgs_num' -- bfgs with numerical gradient
+	//					= 'lbfgs' -- lbfgs with analytical gradient
+	//					= 'lbfgs_num' -- lbfgs with numerical gradient
+	//					= 'lbfgs_box' -- lbfgs with analytical gradient constrained to a box
+	//					= 'newton' -- Newton search analytical Hessian 
+	//					= 'newton_box' -- Newton search analytical Hessian constrained to a box
+	//          = 'trust_radius' -- Trust radius
+
+
+
+
 	cout << "Let's test dlib idiot!";
 	cout << endl;
 
@@ -276,12 +285,6 @@ int main()
 
     try
     {
-
-
-
-				// create image 
-
-
 
 
         // make a column vector of length 3
@@ -302,7 +305,6 @@ int main()
 				boxMax(3) = muMax;
 
 
-
         // Set the starting point to (4,8).  This is the point the optimization algorithm
         // will start out from and it will move it closer and closer to the function's 
         // minimum point.   So generally you want to try and compute a good guess that is
@@ -310,6 +312,9 @@ int main()
         //starting_point = 28, 28;
 
 				starting_point = xCoord, yCoord, r, mu;
+
+
+
 
 
         // The first example below finds the minimum of the rosen() function and uses the
@@ -337,12 +342,14 @@ int main()
 				cout << endl;
 
 
-				//cin.get();
+				cin.get();
 
 
 			
-
-        cout << "Find the minimum of the rosen function()" << endl;
+				cout << "***********************************************************" << endl;
+        cout << "Find the minimum of the function" << endl;
+				cout << "Using BFGS algorithm..." << endl;
+				cout << "It uses analytic gradient of function ... " <<endl;
 
 				//cin.get();
 
@@ -367,10 +374,17 @@ int main()
         // of (1,1).
         cout << "rosen solution:\n" << starting_point << endl;
 
-				//cin.get();
+
+
+				cin.get();
 
 
 
+
+				cout << "***********************************************************" << endl;
+				cout << "Find the minimum of the function" << endl;
+				cout << "Using BFGS algorithm..." << endl;
+				cout << "It uses approximate gradient (numerical) of function ... " <<endl;
 
 
         // Now let's try doing it again with a different starting point and the version
@@ -384,13 +398,13 @@ int main()
 
         find_min_using_approximate_derivatives(bfgs_search_strategy(),
                                                objective_delta_stop_strategy(1e-7),
-                                               rosen, starting_point, -1);
+                                               rosen, starting_point, -3000);
         // Again the correct minimum point is found and stored in starting_point
         cout << "rosen solution:\n" << starting_point << endl;
 
 				
 
-				//cin.get();
+				cin.get();
 
 
 
@@ -398,6 +412,13 @@ int main()
 				//abort();
 				//exit(EXIT_FAILURE);
 
+
+
+
+				cout << "***********************************************************" << endl;
+				cout << "Find the minimum of the function" << endl;
+				cout << "Using L-BFGS algorithm..." << endl;
+				cout << "It uses analytic gradient of function ... " <<endl;
 
 
         // Here we repeat the same thing as above but this time using the L-BFGS 
@@ -411,27 +432,38 @@ int main()
 				starting_point = xCoord, yCoord, r, mu;
 
 				find_min(lbfgs_search_strategy(10),  // The 10 here is basically a measure of how much memory L-BFGS will use.
-                 objective_delta_stop_strategy(1e-7).be_verbose(),  // Adding be_verbose() causes a message to be 
+                 objective_delta_stop_strategy(1e-7),  // Adding be_verbose() causes a message to be 
                                                                     // printed for each iteration of optimization.
-                 rosen, rosen_derivative, starting_point, -4000);
+                 rosen, rosen_derivative, starting_point, -3000);
 
         cout << endl << "rosen solution: \n" << starting_point << endl;
 
 
-				//cin.get();
+				cin.get();
+
+
 
         //starting_point = -94, 5.2;
+
+
+
+
+				cout << "***********************************************************" << endl;
+				cout << "Find the minimum of the function" << endl;
+				cout << "Using L-BFGS algorithm..." << endl;
+				cout << "It uses approximate gradient (numerical) of function ... " <<endl;
+
         
 
 				starting_point = xCoord, yCoord, r, mu;
 				find_min_using_approximate_derivatives(lbfgs_search_strategy(10),
                                                objective_delta_stop_strategy(1e-7),
-                                               rosen, starting_point, -1);
+                                               rosen, starting_point, -3000);
         cout << "rosen solution: \n"<< starting_point << endl;
 
 
 
-				//cin.get();
+				cin.get();
 
 
 
@@ -452,17 +484,22 @@ int main()
         //                         rosen, rosen_derivative, starting_point, 0.1, 0.8);
 
 
-				cout << "Providing a box!!!" << endl;
+
+
+				cout << "***********************************************************" << endl;
+				cout << "Find the minimum of the function CONSTRAINED TO A BOX" << endl;
+				cout << "Using L-BFGS algorithm..." << endl;
+				cout << "It uses analytical gradient of function ... " <<endl;
+
+
+				
 
 
 				starting_point = xCoord, yCoord, r, mu; // Start with a valid point inside the constraint box.
 				cout << find_min_box_constrained(lbfgs_search_strategy(10),
-																 objective_delta_stop_strategy(1e-9).be_verbose(),  
+																 objective_delta_stop_strategy(1e-7),  
 																	rosen, rosen_derivative, starting_point, boxMin, boxMax);
 
-				cout << endl;
-
-				cout << "Worked?";
 
 				cout << endl;
 
@@ -473,15 +510,6 @@ int main()
 
         cout << endl << "constrained rosen solution: \n" << starting_point << endl;
 
-        // You can also use an approximate derivative like so:
-        
-				//starting_point = 0.1, 0.1; 
-        //find_min_box_constrained(bfgs_search_strategy(),  
-        //                         objective_delta_stop_strategy(1e-9),  
-        //                         rosen, derivative(rosen), starting_point, 0.1, 0.8);
-        //cout << endl << "constrained rosen solution: \n" << starting_point << endl;
-
-
 				cin.get();
 
 				//exit(EXIT_FAILURE);
@@ -489,15 +517,11 @@ int main()
 
 
 
-				starting_point = xCoord, yCoord, r, mu;
+				cout << "***********************************************************" << endl;
+				cout << "Find the minimum of the function..." << endl;
+				cout << "Using Newton search algorithm..." << endl;
+				cout << "It uses analytical Hessian of function ... " <<endl;
 
-				find_min_box_constrained(bfgs_search_strategy(),  
-					objective_delta_stop_strategy(1e-5).be_verbose(),  
-					rosen, derivative(rosen), starting_point, boxMin, boxMax);
-				cout << endl << "constrained rosen solution: \n" << starting_point << endl;
-
-
-				cin.get();
 
 				//////////////////////////////////////////////////////////////
 				//
@@ -512,23 +536,20 @@ int main()
         //starting_point = 0.8, 1.3;
         
 				starting_point = xCoord, yCoord, r, mu;
-
+				
 				cout << "With Hessian? " <<  endl;
 				
 				find_min(newton_search_strategy(rosen_hessian),
                  //objective_delta_stop_strategy(1e-7),
-								 objective_delta_stop_strategy(1e-2).be_verbose(),
+								 objective_delta_stop_strategy(1e-7),
                  rosen,
                  rosen_derivative,
                  starting_point,
-                 -2500.0);
+                 -3000.0);
         cout << "rosen solution: \n"<< starting_point << endl;
 
 
 				cin.get();
-
-
-
 
 				//////////////////////////////////////////////////////////////
 				//
@@ -544,18 +565,72 @@ int main()
         //starting_point = 0.8, 1.3;
 
 
+
+				cout << "***********************************************************" << endl;
+				cout << "Find the minimum of the function CONSTRAINED TO A BOX" << endl;
+				cout << "Using Newton search..." << endl;
+				cout << "It uses analytical Hessian of function ... " <<endl;
+
+
+
+				//////////////////////////////////////////////////////////////
+				//
+				//
+				//             CHECK THE HESSIAN YOU IDIOT !!!
+				//						 Note the convergence criterion has been relaxed!
+				//
+				//
+				/////////////////////////////////////////////////////////////
+
+
+
+				starting_point = xCoord, yCoord, r, mu; // Start with a valid point inside the constraint box.
+				cout << find_min_box_constrained(newton_search_strategy(rosen_hessian),
+					objective_delta_stop_strategy(1e-2),  
+					rosen, rosen_derivative, starting_point, boxMin, boxMax);
+
+
+
+
+				//////////////////////////////////////////////////////////////
+				//
+				//
+				//             CHECK THE HESSIAN YOU IDIOT !!!
+				//
+				//
+				/////////////////////////////////////////////////////////////
+
+
+
+				cout << endl;
+
+
+				// Here we put the same [0.1 0.8] range constraint on each variable, however, you
+				// can put different bounds on each variable by passing in column vectors of
+				// constraints for the last two arguments rather than scalars.  
+
+				cout << endl << "constrained rosen solution with Hessian: \n" << starting_point << endl;
+
+				cin.get();
+
+
 				exit(EXIT_FAILURE);
 
 
-				cout << "With trust radius ?" << endl;
 
+
+				cout << "***********************************************************" << endl;
+				cout << "Find the minimum of the function with trust radius" << endl;
+
+				//						 Noticed the convergence criterion has been relaxed!
+				
 				starting_point = xCoord, yCoord, r, mu;
 
 
-        find_min_trust_region(objective_delta_stop_strategy(1e-5).be_verbose(),
+        find_min_trust_region(objective_delta_stop_strategy(1e-5), //.be_verbose(),
             rosen_model(), 
             starting_point, 
-            10 // initial trust region radius
+            2 // initial trust region radius
         );
         cout << "rosen solution: \n"<< starting_point << endl;
 
@@ -575,66 +650,8 @@ int main()
 				//////////////////////////////////////////////////////////////
 
 
-				exit(EXIT_FAILURE);
+				//exit(EXIT_FAILURE);
 
-
-
-        // Now let's look at using the test_function object with the optimization 
-        // functions.  
-        cout << "\nFind the minimum of the test_function" << endl;
-
-
-				//cin.get();
-
-        column_vector target(4);
-        starting_point.set_size(4);
-
-        // This variable will be used as the target of the test_function.   So,
-        // our simple test_function object will have a global minimum at the
-        // point given by the target.  We will then use the optimization 
-        // routines to find this minimum value.
-        target = 3, 5, 1, 7;
-
-        // set the starting point far from the global minimum
-        starting_point = 1,2,3,4;
-        find_min_using_approximate_derivatives(bfgs_search_strategy(),
-                                               objective_delta_stop_strategy(1e-7),
-                                               test_function(target), starting_point, -1);
-        // At this point the correct value of (3,5,1,7) should be found and stored in starting_point
-        cout << "test_function solution:\n" << starting_point << endl;
-
-
-				//cin.get();
-
-        // Now let's try it again with the conjugate gradient algorithm.
-        starting_point = -4,5,99,3;
-        find_min_using_approximate_derivatives(cg_search_strategy(),
-                                               objective_delta_stop_strategy(1e-7),
-                                               test_function(target), starting_point, -1);
-        cout << "test_function solution:\n" << starting_point << endl;
-
-
-				//cin.get();
-
-
-
-        // Finally, let's try the BOBYQA algorithm.  This is a technique specially
-        // designed to minimize a function in the absence of derivative information.  
-        // Generally speaking, it is the method of choice if derivatives are not available.
-        starting_point = -4,5,99,3;
-        find_min_bobyqa(test_function(target), 
-                        starting_point, 
-                        9,    // number of interpolation points
-                        uniform_matrix<double>(4,1, -1e100),  // lower bound constraint
-                        uniform_matrix<double>(4,1, 1e100),   // upper bound constraint
-                        10,    // initial trust region radius
-                        1e-6,  // stopping trust region radius
-                        100    // max number of objective function evaluations
-        );
-        cout << "test_function solution:\n" << starting_point << endl;
-
-
-				cin.get();
 
     }
     catch (std::exception& e)
